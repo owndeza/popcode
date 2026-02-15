@@ -23,11 +23,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            libx11-dev \
-            libxrandr-dev \
-            libxcursor-dev \
-            pkg-config \
-            libasound2-dev
+          build-essential \
+          pkg-config \
+          libx11-dev \
+          libx11-xcb-dev \
+          libxrandr-dev \
+          libxcursor-dev \
+          libxkbcommon-dev \
+          libxkbcommon-x11-dev \
+          libwayland-dev \
+          libasound2-dev
 
       # 4. Кэшируем Cargo registry и git для ускорения сборки
       - name: Cache Cargo
