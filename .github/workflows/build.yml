@@ -1,0 +1,43 @@
+name: Build Zed
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Получаем код из репо
+      - uses: actions/checkout@v3
+
+      # 2. Устанавливаем системные зависимости для x11
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libx11-dev libxrandr-dev libxcursor-dev pkg-config
+
+      # 3. Кэшируем Cargo registry и git для ускорения сборки
+      - name: Cache Cargo
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+
+      # 4. Обновляем Rust (раннер уже содержит его)
+      - name: Ensure Rust is installed
+        run: rustup update
+
+      # 5. Сборка проекта
+      - name: Build Zed
+        run: cargo build --release
+
+      # 6. Загружаем бинарь как артефакт
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zed-release
+          path: target/release/zed
