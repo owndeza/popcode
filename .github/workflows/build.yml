@@ -18,7 +18,18 @@ jobs:
       - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get install -y libx11-dev libxrandr-dev libxcursor-dev pkg-config
 
-      # 3. Кэшируем Cargo registry и git для ускорения сборки
+      # 3. Устанавливаем системные зависимости для x11 и alsa
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libx11-dev \
+            libxrandr-dev \
+            libxcursor-dev \
+            pkg-config \
+            libasound2-dev
+
+      # 4. Кэшируем Cargo registry и git для ускорения сборки
       - name: Cache Cargo
         uses: actions/cache@v3
         with:
@@ -27,15 +38,15 @@ jobs:
             ~/.cargo/git
           key: cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
-      # 4. Обновляем Rust (раннер уже содержит его)
+      # 5. Обновляем Rust (раннер уже содержит его)
       - name: Ensure Rust is installed
         run: rustup update
 
-      # 5. Сборка проекта
+      # 6. Сборка проекта
       - name: Build Zed
         run: cargo build --release
 
-      # 6. Загружаем бинарь как артефакт
+      # 7. Загружаем бинарь как артефакт
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
